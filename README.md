@@ -136,3 +136,8 @@ Check out [`CONTRIBUTING.md`](CONTRIBUTING.md) for more information!
 * [bStats Metrics](https://bstats.org/plugin/bukkit/GetMeHome/)
 
 [![bStats GetMeHome Signature](https://bstats.org/signatures/bukkit/GetMeHome.svg)](https://bstats.org/plugin/bukkit/GetMeHome/)
+
+# License
+
+GetMeHome is licensed under the [MIT License](LICENSE), copyright (c) 2016-2019 Simon Chuu.
+This project is a fork of [SimonOrJ/GetMeHome](https://github.com/SimonOrJ/GetMeHome).
