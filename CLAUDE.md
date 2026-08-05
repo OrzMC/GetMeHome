@@ -30,13 +30,13 @@ All Gradle commands run via the wrapper (Gradle 9.6.1). Building requires a JDK 
 
 - **Single source of truth for the version** = the `version:` field in `src/main/resources/plugin.yml`. `build.gradle.kts` reads it via SnakeYAML and derives everything from it.
 - `build.gradle.kts` derives the published version from GitHub env vars:
-  - SemVer git tag (no `-`) → release: the tag name itself (CI guard enforces tag == plugin.yml version)
+  - `v`-prefixed SemVer git tag (no `-`, e.g. `v3.0.0`) → release: the published version is the tag minus the `v` prefix (`3.0.0`), and the CI guard enforces that tag(without `v`) == plugin.yml version
   - main-branch push → `{version}-dev.{run}` → Hangar `beta` channel
   - local build → `{version}-dev`
 - The `io.papermc.hangar-publish-plugin` publishes the shadowJar and syncs `README.md` to the Hangar project page. Key tasks: `publishPluginPublicationToHangar`, `syncPluginPublicationMainResourcePagePageToHangar`.
 - CI workflows (`.github/workflows/`):
   - `build.yml` — PRs to main + main pushes: wrapper validation, shadowJar build, artifact upload, build-summary PR comment.
-  - `publish.yml` — main pushes (beta snapshot) and SemVer tags (release): shadowJar fast-fail → Hangar publish with retry + "version already exists" idempotency → README page sync → GitHub Release (tags only) → auto-increment `plugin.yml` patch and push back to main via `GITHUB_TOKEN`.
+  - `publish.yml` — main pushes (beta snapshot) and `v`-prefixed SemVer tags (release): shadowJar fast-fail → Hangar publish with retry + "version already exists" idempotency → README page sync → GitHub Release (tags only) → auto-increment `plugin.yml` patch and push back to main via `GITHUB_TOKEN`.
 - Operational constraints:
   - Hangar channels `beta` / `release` are case-sensitive and must be pre-created on the Hangar project page (the plugin does not create them).
   - The version-bump commit uses the default `GITHUB_TOKEN` because main has no branch protection — no PAT/BOT_PAT needed.
@@ -45,4 +45,4 @@ All Gradle commands run via the wrapper (Gradle 9.6.1). Building requires a JDK 
 
 ## Release process
 
-To cut a release, push a SemVer tag identical to the current `plugin.yml` version (no `v` prefix). CI publishes to the `release` channel, creates a GitHub Release, then bumps `plugin.yml` to the next patch on main. The tag must always match `plugin.yml` (the workflow's version guard fails otherwise).
+To cut a release, push a `v`-prefixed SemVer tag matching the current `plugin.yml` version, e.g. `v3.0.0` when `plugin.yml` says `3.0.0` (GitHub convention). CI publishes `3.0.0` (the tag minus `v`) to the `release` channel, creates a GitHub Release tagged `v3.0.0`, then bumps `plugin.yml` to the next patch on main. The tag (minus the `v`) must always equal `plugin.yml` (the workflow's version guard fails otherwise).

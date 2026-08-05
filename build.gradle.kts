@@ -63,14 +63,14 @@ val githubRefType: String? = System.getenv("GITHUB_REF_TYPE")
 val githubRef: String? = System.getenv("GITHUB_REF")
 val versionString: String = version as String
 
-// tag 名（仅 tag push 时有值）
-val tagName: String? = if (githubRefType == "tag") githubRef?.removePrefix("refs/tags/") else null
+// tag 名（仅 tag push 时有值）。GitHub 规范 tag 带 v 前缀，此处去掉以便版本号保持 SemVer（如 v3.0.0 → 3.0.0）
+val tagName: String? = if (githubRefType == "tag") githubRef?.removePrefix("refs/tags/")?.removePrefix("v") else null
 val isTag: Boolean = tagName != null
 // 纯 SemVer tag（不含 -）→ Release；其余（分支 push / 预发布 tag / 本地）→ beta
 val isReleaseTag: Boolean = isTag && tagName != null && !tagName.contains("-")
 
 val shadowJarVersion: String = when {
-    // tag → 正式版版本号以 tag 为准（纯 tag 驱动）；CI 门禁保证 tag == plugin.yml version
+    // tag → 正式版版本号以 tag 为准（纯 tag 驱动，tag 的 v 前缀已去掉）；CI 门禁保证 tag(去 v) == plugin.yml version
     isTag && tagName != null -> tagName
     // CI main push → {base}-dev.{run}（workflow 仅对 main 分支触发）
     githubRunNumber != null -> "${versionString}-dev.${githubRunNumber}"

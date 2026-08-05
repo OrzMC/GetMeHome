@@ -27,3 +27,11 @@ When you want any feature request or encounter any bugs, you may open an issue
 about it.
 
 If there's enough interest, an API can be developed.
+
+# Releases
+
+Releases are cut by pushing a `v`-prefixed SemVer tag that matches the
+`version:` field in `src/main/resources/plugin.yml` (no `-` prerelease part),
+e.g. `v3.0.0` when the version is `3.0.0`. CI then publishes to Hangar,
+creates a GitHub Release tagged `v3.0.0`, and bumps the version to the next
+patch on `main`.

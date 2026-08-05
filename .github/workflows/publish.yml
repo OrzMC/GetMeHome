@@ -4,7 +4,7 @@ on:
     branches:
       - main
     tags:
-      - '*.*.*'
+      - 'v*.*.*'
 
 permissions:
   contents: write
@@ -33,16 +33,19 @@ jobs:
       - name: build shadowJar
         run: ./gradlew shadowJar --stacktrace
 
-      # 版本一致性门禁：tag 必须与 plugin.yml 的 version 字段一致（上一轮发布后已自动递增同步）
+      # 版本一致性门禁：tag 必须与 plugin.yml 的 version 字段一致（上一轮发布后已自动递增同步）。
+      # GitHub 规范：tag 带 v 前缀（如 v3.0.0），比较时去掉 v。
       - name: verify tag matches plugin.yml version
         if: github.ref_type == 'tag'
         run: |
           PLUGIN_VERSION=$(sed -n 's/^version: *//p' src/main/resources/plugin.yml)
+          TAG_VERSION="${{ github.ref_name }}"
+          TAG_VERSION="${TAG_VERSION#v}"
           echo "Pushed tag:         ${{ github.ref_name }}"
           echo "plugin.yml version: ${PLUGIN_VERSION}"
-          if [ "${{ github.ref_name }}" != "${PLUGIN_VERSION}" ]; then
+          if [ "${TAG_VERSION}" != "${PLUGIN_VERSION}" ]; then
             echo "::error::Tag '${{ github.ref_name }}' does not match version '${PLUGIN_VERSION}' in src/main/resources/plugin.yml"
-            echo "::error::Expected a tag matching the current plugin.yml version, e.g. ${PLUGIN_VERSION}"
+            echo "::error::Expected a tag matching the current plugin.yml version with a 'v' prefix, e.g. v${PLUGIN_VERSION}"
             exit 1
           fi
 
