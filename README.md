@@ -1,15 +1,13 @@
 # ![Logo](https://www.spigotmc.org/data/resource_icons/66/66257.jpg) GetMeHome
-![Bukkit](https://img.shields.io/badge/bukkit-1.7%20--%201.14-brightgreen.svg)
-[![GitHub All Release Downloads](https://img.shields.io/github/downloads/SimonOrJ/GetMeHome/total.svg?label=github%20downloads)](https://github.com/SimonOrJ/GetMeHome/releases)
-[![GitHub release](https://img.shields.io/github/release/SimonOrJ/GetMeHome.svg)](https://github.com/SimonOrJ/GetMeHome/releases/latest)
-[![GitHub pre-release](https://img.shields.io/github/release-pre/SimonOrJ/GetMeHome.svg?label=pre-release)](https://github.com/SimonOrJ/GetMeHome/releases)
+[![GitHub All Release Downloads](https://img.shields.io/github/downloads/wangzhizhou/GetMeHome/total.svg?label=github%20downloads)](https://github.com/wangzhizhou/GetMeHome/releases)
+[![GitHub release](https://img.shields.io/github/release/wangzhizhou/GetMeHome.svg)](https://github.com/wangzhizhou/GetMeHome/releases/latest)
+[![GitHub pre-release](https://img.shields.io/github/release-pre/wangzhizhou/GetMeHome.svg?label=pre-release)](https://github.com/wangzhizhou/GetMeHome/releases)
 
-*A straightforward Spigot plugin that gets you home*
+*A straightforward Paper plugin that gets you home*
 
 **GetMeHome** has all the features you would need for a simple home plugin.
-The configuration is very simple to understand and set up!  This plugin was
-tested to work on Minecraft 1.7 and up, and it will continue being updated to
-be future-proof!
+The configuration is very simple to understand and set up!  It targets
+**Paper 26.1–26.2** (Minecraft 26.x) and requires **Java 25**.
 
 There are plenty of home plugins out there, but this plugin was built out of
 necessity for a survival server. There was no reliable home plugin to rely on
@@ -33,6 +31,7 @@ GetMeHome features:
     * Shakespearean English (v1.0.3)
   * Japanese (v1.0.3; by kj_Brooke)
   * Korean (v1.0.1)
+  * Chinese (Simplified) (by wangzhizhou)
 * [Custom localization or messages](https://github.com/SimonOrJ/GetMeHome/wiki/Custom-Messages)
 * A way to go to or edit other player's homes
 
@@ -116,8 +115,8 @@ By default, these permissions are given only to server operators.
   ignores the target player's home limits, so be sure to check the number
   using `/listhomes <player>`!
   * `/sethome <player> <name>`
-* `getmehome.command.delhome`: Allows deletion of other player's home. There is
-  no confirmation prompt, so be careful!
+* `getmehome.command.delhome.other`: Allows deletion of other player's home.
+  There is no confirmation prompt, so be careful!
   * `/delhome <player> <name>`
 * `getmehome.command.listhomes.other`: Allows listing of other players' homes.
   * `/listhomes <player>`
@@ -133,9 +132,6 @@ Check out [`CONTRIBUTING.md`](CONTRIBUTING.md) for more information!
 
 * [Spigot resource link](https://www.spigotmc.org/resources/getmehome.66257/)
 * [BukkitDev resource link](https://dev.bukkit.org/projects/getmehome)
-* [bStats Metrics](https://bstats.org/plugin/bukkit/GetMeHome/)
-
-[![bStats GetMeHome Signature](https://bstats.org/signatures/bukkit/GetMeHome.svg)](https://bstats.org/plugin/bukkit/GetMeHome/)
 
 # License
 
