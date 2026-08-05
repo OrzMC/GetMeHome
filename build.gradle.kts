@@ -108,6 +108,10 @@ tasks {
         archiveClassifier.set(null as String?)
         archiveVersion.set(shadowJarVersion)
         relocate("org.bstats", "com.simonorj.mc.getmehome.shade.org.bstats")
+        // 把根 LICENSE（MIT，Simon Chuu 版权）并入 jar 的 META-INF/，满足分发时的版权声明要求
+        from("LICENSE") {
+            into("META-INF")
+        }
     }
     build {
         dependsOn("shadowJar")
