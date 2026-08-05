@@ -1,7 +1,7 @@
 # ![Logo](https://www.spigotmc.org/data/resource_icons/66/66257.jpg) GetMeHome
-[![GitHub All Release Downloads](https://img.shields.io/github/downloads/wangzhizhou/GetMeHome/total.svg?label=github%20downloads)](https://github.com/wangzhizhou/GetMeHome/releases)
-[![GitHub release](https://img.shields.io/github/release/wangzhizhou/GetMeHome.svg)](https://github.com/wangzhizhou/GetMeHome/releases/latest)
-[![GitHub pre-release](https://img.shields.io/github/release-pre/wangzhizhou/GetMeHome.svg?label=pre-release)](https://github.com/wangzhizhou/GetMeHome/releases)
+[![GitHub All Release Downloads](https://img.shields.io/github/downloads/OrzMC/GetMeHome/total.svg?label=github%20downloads)](https://github.com/OrzMC/GetMeHome/releases)
+[![GitHub release](https://img.shields.io/github/release/OrzMC/GetMeHome.svg)](https://github.com/OrzMC/GetMeHome/releases/latest)
+[![GitHub pre-release](https://img.shields.io/github/release-pre/OrzMC/GetMeHome.svg?label=pre-release)](https://github.com/OrzMC/GetMeHome/releases)
 
 *A straightforward Paper plugin that gets you home*
 
