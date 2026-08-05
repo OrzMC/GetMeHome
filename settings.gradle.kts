@@ -3,3 +3,7 @@
  */
 
 rootProject.name = "GetMeHome"
+plugins {
+    // 本地开发时 toolchain 25 若未安装，自动下载
+    id("org.gradle.toolchains.foojay-resolver-convention").version("0.10.0")
+}

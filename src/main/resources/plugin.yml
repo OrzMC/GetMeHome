@@ -5,7 +5,7 @@ contributors: [wangzhizhou]
 description: Simple home plugin that just gets you home
 main: com.simonorj.mc.getmehome.GetMeHome
 website: http://github.com/SimonOrJ/GetMeHome
-api-version: 1.21.7
+api-version: '26.1.2'
 
 commands:
   getmehome:
