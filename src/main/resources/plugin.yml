@@ -7,6 +7,7 @@ main: com.simonorj.mc.getmehome.GetMeHome
 website: http://github.com/SimonOrJ/GetMeHome
 api-version: '26.2'
 
+# Paper 26.2+ only（Brigadier 命令注册，非 Spigot 兼容）
 # Paper 26.x 插件模式：命令经 LifecycleEvents.COMMANDS + Brigadier 注册
 # （见 CommandRegistrar），不再声明 YAML commands —— Bukkit CommandMap 声明
 # 会生成无 executor 的幽灵命令（执行返回 false → 显示 usage）且与 Brigadier 树冲突。

@@ -80,9 +80,17 @@ public class HomeCommands implements TabExecutor {
         // Run command
         switch (command.toLowerCase()) {
             case "home":
+                if (!(sender instanceof Player)) {
+                    consoleCommand(sender, command);
+                    return true;
+                }
                 home((Player) sender, target, home);
                 break;
             case "sethome":
+                if (!(sender instanceof Player)) {
+                    consoleCommand(sender, command);
+                    return true;
+                }
                 setHome((Player) sender, target, home);
                 break;
             case "setdefaulthome":

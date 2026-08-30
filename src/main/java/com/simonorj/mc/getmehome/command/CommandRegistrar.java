@@ -24,9 +24,15 @@ import java.util.concurrent.CompletableFuture;
  * Brigadier tree. Registering natively here keeps GetMeHome's own suggestions/execution
  * in charge. The actual command logic is delegated to the existing executors
  * ({@link HomeCommands}, {@link ListHomesCommand}, {@link MetaCommand}) untouched.
+ *
+ * <p>Every node is gated with {@code .requires(...)}: senders lacking the permission see
+ * "Unknown or incomplete command" instead of an explicit denial. This is an intentional
+ * security practice (hiding the command's existence), consistent with native Paper 26.x
+ * command behavior.
  */
 public class CommandRegistrar {
     private static final String GLOBAL_FLAG = "-global";
+    private static final String GLOBAL_SHORT_FLAG = "-g";
 
     private final GetMeHome plugin;
     private final HomeCommands homeCommands;
@@ -48,10 +54,10 @@ public class CommandRegistrar {
                     Commands.literal("home")
                             .requires(src -> src.getSender().hasPermission("getmehome.command.home"))
                             .executes(ctx -> run(ctx, "home", new String[0]))
-                            .then(Commands.argument("target", StringArgumentType.word())
+                            .then(Commands.argument("target", StringArgumentType.string())
                                     .suggests((ctx, builder) -> suggestFirstArg(ctx, builder, "getmehome.command.home.other"))
                                     .executes(ctx -> run(ctx, "home", new String[]{arg(ctx, "target")}))
-                                    .then(Commands.argument("home", StringArgumentType.word())
+                                    .then(Commands.argument("home", StringArgumentType.string())
                                             .requires(src -> src.getSender().hasPermission("getmehome.command.home.other"))
                                             .suggests(this::suggestPlayerHome)
                                             .executes(ctx -> run(ctx, "home", new String[]{arg(ctx, "target"), arg(ctx, "home")}))
@@ -66,10 +72,10 @@ public class CommandRegistrar {
                     Commands.literal("sethome")
                             .requires(src -> src.getSender().hasPermission("getmehome.command.sethome"))
                             .executes(ctx -> run(ctx, "sethome", new String[0]))
-                            .then(Commands.argument("target", StringArgumentType.word())
+                            .then(Commands.argument("target", StringArgumentType.string())
                                     .suggests((ctx, builder) -> suggestFirstArg(ctx, builder, "getmehome.command.sethome.other"))
                                     .executes(ctx -> run(ctx, "sethome", new String[]{arg(ctx, "target")}))
-                                    .then(Commands.argument("home", StringArgumentType.word())
+                                    .then(Commands.argument("home", StringArgumentType.string())
                                             .requires(src -> src.getSender().hasPermission("getmehome.command.sethome.other"))
                                             .suggests(this::suggestPlayerHome)
                                             .executes(ctx -> run(ctx, "sethome", new String[]{arg(ctx, "target"), arg(ctx, "home")}))
@@ -83,7 +89,8 @@ public class CommandRegistrar {
                     Commands.literal("setdefaulthome")
                             .requires(src -> src.getSender().hasPermission("getmehome.command.setdefaulthome"))
                             .executes(ctx -> run(ctx, "setdefaulthome", new String[0]))
-                            .then(Commands.argument("home", StringArgumentType.word())
+                            .then(Commands.argument("home", StringArgumentType.string())
+                                    .suggests(this::suggestOwnHomes)
                                     .executes(ctx -> run(ctx, "setdefaulthome", new String[]{arg(ctx, "home")}))
                             )
                             .build(),
@@ -94,10 +101,10 @@ public class CommandRegistrar {
                     Commands.literal("delhome")
                             .requires(src -> src.getSender().hasPermission("getmehome.command.delhome"))
                             .executes(ctx -> run(ctx, "delhome", new String[0]))
-                            .then(Commands.argument("target", StringArgumentType.word())
+                            .then(Commands.argument("target", StringArgumentType.string())
                                     .suggests((ctx, builder) -> suggestFirstArg(ctx, builder, "getmehome.command.delhome.other"))
                                     .executes(ctx -> run(ctx, "delhome", new String[]{arg(ctx, "target")}))
-                                    .then(Commands.argument("home", StringArgumentType.word())
+                                    .then(Commands.argument("home", StringArgumentType.string())
                                             .requires(src -> src.getSender().hasPermission("getmehome.command.delhome.other"))
                                             .suggests(this::suggestPlayerHome)
                                             .executes(ctx -> run(ctx, "delhome", new String[]{arg(ctx, "target"), arg(ctx, "home")}))
@@ -111,10 +118,10 @@ public class CommandRegistrar {
                     Commands.literal("listhomes")
                             .requires(src -> src.getSender().hasPermission("getmehome.command.listhomes"))
                             .executes(ctx -> run(ctx, "listhomes", new String[0]))
-                            .then(Commands.argument("arg1", StringArgumentType.word())
+                            .then(Commands.argument("arg1", StringArgumentType.string())
                                     .suggests(this::suggestListHomesFirstArg)
                                     .executes(ctx -> run(ctx, "listhomes", new String[]{arg(ctx, "arg1")}))
-                                    .then(Commands.argument("arg2", StringArgumentType.word())
+                                    .then(Commands.argument("arg2", StringArgumentType.string())
                                             .suggests(this::suggestListHomesSecondArg)
                                             .executes(ctx -> run(ctx, "listhomes", new String[]{arg(ctx, "arg1"), arg(ctx, "arg2")}))
                                     )
@@ -127,7 +134,7 @@ public class CommandRegistrar {
             commands.register(
                     Commands.literal("getmehome")
                             .executes(ctx -> run(ctx, "getmehome", new String[0]))
-                            .then(Commands.argument("action", StringArgumentType.word())
+                            .then(Commands.argument("action", StringArgumentType.string())
                                     .suggests(this::suggestMetaAction)
                                     .executes(ctx -> run(ctx, "getmehome", new String[]{arg(ctx, "action")}))
                             )
@@ -165,20 +172,32 @@ public class CommandRegistrar {
      * {@code onTabComplete} for {@code args.length == 1}).
      */
     private CompletableFuture<Suggestions> suggestFirstArg(CommandContext<CommandSourceStack> ctx, SuggestionsBuilder builder, String otherPerm) {
+        suggestOwnHomes(ctx, builder);
         CommandSender sender = ctx.getSource().getSender();
         String start = builder.getRemainingLowerCase();
 
-        if (sender instanceof Player) {
-            for (String n : plugin.getStorage().getAllHomes(((Player) sender).getUniqueId()).keySet()) {
-                if (n.toLowerCase().startsWith(start)) {
-                    builder.suggest(n);
-                }
-            }
-        }
         if (otherPerm != null && sender.hasPermission(otherPerm)) {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (p.getName().toLowerCase().startsWith(start)) {
                     builder.suggest(p.getName());
+                }
+            }
+        }
+        return builder.buildFuture();
+    }
+
+    /**
+     * First argument of /setdefaulthome (and the own-home part of /home, /sethome,
+     * /delhome): only the sender's own home names (mirrors the legacy {@code onTabComplete}
+     * for {@code args.length == 1}).
+     */
+    private CompletableFuture<Suggestions> suggestOwnHomes(CommandContext<CommandSourceStack> ctx, SuggestionsBuilder builder) {
+        CommandSender sender = ctx.getSource().getSender();
+        if (sender instanceof Player) {
+            String start = builder.getRemainingLowerCase();
+            for (String n : plugin.getStorage().getAllHomes(((Player) sender).getUniqueId()).keySet()) {
+                if (n.toLowerCase().startsWith(start)) {
+                    builder.suggest(n);
                 }
             }
         }
@@ -221,9 +240,10 @@ public class CommandRegistrar {
         return builder.buildFuture();
     }
 
-    /** Second argument of /listhomes: only valid after -global with the {@code *.other} permission. */
+    /** Second argument of /listhomes: only valid after -global/-g with the {@code *.other} permission. */
     private CompletableFuture<Suggestions> suggestListHomesSecondArg(CommandContext<CommandSourceStack> ctx, SuggestionsBuilder builder) {
-        if (!GLOBAL_FLAG.equalsIgnoreCase(ctx.getArgument("arg1", String.class))
+        String arg1 = ctx.getArgument("arg1", String.class);
+        if (!(GLOBAL_FLAG.equalsIgnoreCase(arg1) || GLOBAL_SHORT_FLAG.equalsIgnoreCase(arg1))
                 || !ctx.getSource().getSender().hasPermission("getmehome.command.listhomes.other")) {
             return builder.buildFuture();
         }
