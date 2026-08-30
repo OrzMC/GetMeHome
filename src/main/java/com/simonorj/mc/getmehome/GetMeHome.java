@@ -6,7 +6,6 @@ import com.simonorj.mc.getmehome.config.ConfigUpgrader;
 import com.simonorj.mc.getmehome.config.YamlPermValue;
 import com.simonorj.mc.getmehome.storage.HomeStorageAPI;
 import com.simonorj.mc.getmehome.storage.StorageYAML;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -26,8 +25,8 @@ public final class GetMeHome extends JavaPlugin {
     private YamlPermValue cooldown;
 
     private String prefix;
-    private ChatColor focusColor;
-    private ChatColor contentColor;
+    private String focusColor;
+    private String contentColor;
     private int welcomeHomeRadiusSquared;
     private File i18nFolder;
 
@@ -51,11 +50,11 @@ public final class GetMeHome extends JavaPlugin {
         return cooldown;
     }
 
-    public ChatColor getFocusColor() {
+    public String getFocusColor() {
         return focusColor;
     }
 
-    public ChatColor getContentColor() {
+    public String getContentColor() {
         return contentColor;
     }
 
@@ -171,9 +170,9 @@ public final class GetMeHome extends JavaPlugin {
 
         int whr = getConfig().getInt(ConfigTool.WELCOME_HOME_RADIUS_NODE, 4);
         this.welcomeHomeRadiusSquared = whr * whr;
-        this.prefix = ChatColor.translateAlternateColorCodes('&', getConfig().getString(ConfigTool.MESSAGE_PREFIX_NODE, "&6[GetMeHome]"));
-        this.contentColor = ChatColor.getByChar(getConfig().getString(ConfigTool.MESSAGE_CONTENT_COLOR_NODE, "e"));
-        this.focusColor = ChatColor.getByChar(getConfig().getString(ConfigTool.MESSAGE_FOCUS_COLOR_NODE, "f"));
+        this.prefix = getConfig().getString(ConfigTool.MESSAGE_PREFIX_NODE, "&6[GetMeHome]").replace('&', '§');
+        this.contentColor = "§" + getConfig().getString(ConfigTool.MESSAGE_CONTENT_COLOR_NODE, "e");
+        this.focusColor = "§" + getConfig().getString(ConfigTool.MESSAGE_FOCUS_COLOR_NODE, "f");
         MessageTool.reloadI18n(i18nFolder);
     }
 

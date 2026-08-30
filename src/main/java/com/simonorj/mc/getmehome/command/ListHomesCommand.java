@@ -4,7 +4,6 @@ import com.simonorj.mc.getmehome.GetMeHome;
 import com.simonorj.mc.getmehome.I18n;
 import com.simonorj.mc.getmehome.config.YamlPermValue;
 import com.simonorj.mc.getmehome.storage.HomeStorageAPI;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -115,15 +114,15 @@ public class ListHomesCommand implements TabExecutor {
 
         if (i.hasNext()) {
 
-            ChatColor f = plugin.getFocusColor();
-            ChatColor c = plugin.getContentColor();
+            String f = plugin.getFocusColor();
+            String c = plugin.getContentColor();
             list = new StringBuilder(homeName(i.next(), wv, exempt, defaultHome));
 
             while (i.hasNext()) {
                 list.append(c).append(", ").append(f).append(homeName(i.next(), wv, exempt, defaultHome));
             }
         } else {
-            list = new StringBuilder(ChatColor.ITALIC.toString()).append(raw(I18n.CMD_LISTHOMES_NONE, sender));
+            list = new StringBuilder("§o").append(raw(I18n.CMD_LISTHOMES_NONE, sender));
         }
 
         Object total = wv == null ? null : wv.worlds != null && global ? "?" : wv.value;
@@ -156,9 +155,9 @@ public class ListHomesCommand implements TabExecutor {
         }
 
         StringBuilder ret = new StringBuilder();
-        if (d.getKey().equals(defaultHome)) ret.append(ChatColor.BOLD);
-        if (deductable) ret.append(ChatColor.ITALIC);
-        ret.append(d.getKey()).append(ChatColor.RESET);
+        if (d.getKey().equals(defaultHome)) ret.append("§l");
+        if (deductable) ret.append("§o");
+        ret.append(d.getKey()).append("§r");
         return ret.toString();
     }
 }
