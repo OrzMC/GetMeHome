@@ -1,6 +1,6 @@
 package com.simonorj.mc.getmehome.config;
 
-import com.google.common.base.Charsets;
+import java.nio.charset.StandardCharsets;
 import com.simonorj.mc.getmehome.ConfigTool;
 import com.simonorj.mc.getmehome.GetMeHome;
 import org.bukkit.configuration.ConfigurationSection;
@@ -58,7 +58,7 @@ public class ConfigUpgrader {
                 }
             }
 
-            try (Writer writer = new OutputStreamWriter(new FileOutputStream(limitf), Charsets.UTF_8)) {
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(limitf), StandardCharsets.UTF_8)) {
                 writer.write(data.toString());
             }
         } catch (IOException e) {

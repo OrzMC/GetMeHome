@@ -1,14 +1,11 @@
 package com.simonorj.mc.getmehome;
 
-import com.google.common.base.Charsets;
-import com.simonorj.mc.getmehome.command.HomeCommands;
-import com.simonorj.mc.getmehome.command.ListHomesCommand;
-import com.simonorj.mc.getmehome.command.MetaCommand;
+import java.nio.charset.StandardCharsets;
+import com.simonorj.mc.getmehome.command.CommandRegistrar;
 import com.simonorj.mc.getmehome.config.ConfigUpgrader;
 import com.simonorj.mc.getmehome.config.YamlPermValue;
 import com.simonorj.mc.getmehome.storage.HomeStorageAPI;
 import com.simonorj.mc.getmehome.storage.StorageYAML;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -28,8 +25,8 @@ public final class GetMeHome extends JavaPlugin {
     private YamlPermValue cooldown;
 
     private String prefix;
-    private ChatColor focusColor;
-    private ChatColor contentColor;
+    private String focusColor;
+    private String contentColor;
     private int welcomeHomeRadiusSquared;
     private File i18nFolder;
 
@@ -53,11 +50,11 @@ public final class GetMeHome extends JavaPlugin {
         return cooldown;
     }
 
-    public ChatColor getFocusColor() {
+    public String getFocusColor() {
         return focusColor;
     }
 
-    public ChatColor getContentColor() {
+    public String getContentColor() {
         return contentColor;
     }
 
@@ -69,13 +66,9 @@ public final class GetMeHome extends JavaPlugin {
     public void onEnable() {
         GetMeHome.instance = this;
 
-        getCommand("getmehome").setExecutor(new MetaCommand());
-        HomeCommands hc = new HomeCommands(this);
-        getCommand("home").setExecutor(hc);
-        getCommand("sethome").setExecutor(hc);
-        getCommand("setdefaulthome").setExecutor(hc);
-        getCommand("delhome").setExecutor(hc);
-        getCommand("listhomes").setExecutor(new ListHomesCommand(this));
+        // Paper 26.x: commands are registered via LifecycleEvents.COMMANDS + Brigadier
+        // (see CommandRegistrar); plugin.yml declarations are no longer authoritative.
+        new CommandRegistrar(this).register();
 
         // Get config
         saveDefaultConfig();
@@ -159,7 +152,7 @@ public final class GetMeHome extends JavaPlugin {
 
             String data = ConfigTool.saveToString(getConfig());
 
-            try (Writer writer = new OutputStreamWriter(new FileOutputStream(configFile), Charsets.UTF_8)) {
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(configFile), StandardCharsets.UTF_8)) {
                 writer.write(data);
             }
         } catch (IOException e) {
@@ -177,9 +170,9 @@ public final class GetMeHome extends JavaPlugin {
 
         int whr = getConfig().getInt(ConfigTool.WELCOME_HOME_RADIUS_NODE, 4);
         this.welcomeHomeRadiusSquared = whr * whr;
-        this.prefix = ChatColor.translateAlternateColorCodes('&', getConfig().getString(ConfigTool.MESSAGE_PREFIX_NODE, "&6[GetMeHome]"));
-        this.contentColor = ChatColor.getByChar(getConfig().getString(ConfigTool.MESSAGE_CONTENT_COLOR_NODE, "e"));
-        this.focusColor = ChatColor.getByChar(getConfig().getString(ConfigTool.MESSAGE_FOCUS_COLOR_NODE, "f"));
+        this.prefix = getConfig().getString(ConfigTool.MESSAGE_PREFIX_NODE, "&6[GetMeHome]").replace('&', '§');
+        this.contentColor = "§" + getConfig().getString(ConfigTool.MESSAGE_CONTENT_COLOR_NODE, "e");
+        this.focusColor = "§" + getConfig().getString(ConfigTool.MESSAGE_FOCUS_COLOR_NODE, "f");
         MessageTool.reloadI18n(i18nFolder);
     }
 

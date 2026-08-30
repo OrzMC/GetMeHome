@@ -43,6 +43,14 @@ public class MetaCommand implements TabExecutor {
         return true;
     }
 
+    /**
+     * Entry point for the Paper 26.x Brigadier path (see {@link CommandRegistrar}).
+     * The legacy {@link Command} arguments are unused by the meta logic.
+     */
+    public boolean execute(@NotNull CommandSender sender, String[] args) {
+        return onCommand(sender, null, "getmehome", args);
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         if (sender.hasPermission(RELOAD_PERM) && args.length == 1) {

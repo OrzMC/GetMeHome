@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-GetMeHome is a straightforward Paper/Spigot home plugin (fork of SimonOrJ/GetMeHome) supporting multi-home, per-permission home limits, warmup/cooldown delays, and locale-based messages. It currently targets Paper MC 26.x (`api-version` 26.1.2).
+GetMeHome is a straightforward **Paper-only** home plugin (fork of SimonOrJ/GetMeHome) supporting multi-home, per-permission home limits, warmup/cooldown delays, and locale-based messages. It requires **Paper 26.2+** (`api-version` 26.2); commands are registered natively via `LifecycleEvents.COMMANDS` + Brigadier (see `CommandRegistrar`) rather than YAML `CommandMap` declarations, because on 26.x a Bukkit CommandMap declaration produces a ghost command with no executor and native Brigadier registration pre-empts tab-completion.
 
 ## Build & run
 
@@ -41,7 +41,7 @@ All Gradle commands run via the wrapper (Gradle 9.6.1). Building requires a JDK 
   - Hangar channels `beta` / `release` are case-sensitive and must be pre-created on the Hangar project page (the plugin does not create them).
   - The version-bump commit uses the default `GITHUB_TOKEN` because main has no branch protection — no PAT/BOT_PAT needed.
   - `HANGAR_API_TOKEN` secret needs Hangar `create_version` scope (plus page-edit scope for README sync).
-- Key `gradle.properties`: `plugin_jdk_min_version=25`, `plugin_bytecode_target=25`, `paper_api_version=26.1.2.build.74-stable`, `plugin_support_paper_versions=26.1,26.2`, `plugin_debug_server_version=26.2`.
+- Key `gradle.properties`: `plugin_jdk_min_version=25`, `plugin_bytecode_target=25`, `paper_api_version=26.2.build.119-stable`, `plugin_support_paper_versions=26.2`, `plugin_debug_server_version=26.2`.
 
 ## Release process
 

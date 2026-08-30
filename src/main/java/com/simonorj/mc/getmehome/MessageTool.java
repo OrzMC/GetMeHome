@@ -1,6 +1,5 @@
 package com.simonorj.mc.getmehome;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -55,8 +54,8 @@ public class MessageTool {
         String pre = GetMeHome.getInstance().getPrefix();
         if (!pre.isEmpty()) pre += ' ';
 
-        ChatColor focus = GetMeHome.getInstance().getFocusColor();
-        ChatColor content = GetMeHome.getInstance().getContentColor();
+        String focus = GetMeHome.getInstance().getFocusColor();
+        String content = GetMeHome.getInstance().getContentColor();
 
         for (int i = args.length - 1; i >= 0; i--) {
             args[i] = focus + args[i].toString() + content;
@@ -73,7 +72,7 @@ public class MessageTool {
             args[i] = args[i].toString();
         }
 
-        return pre + ChatColor.RED + base(i18n, getLocale(p), args);
+        return pre + "§c" + base(i18n, getLocale(p), args);
     }
 
     private static Locale getLocale(CommandSender sender) {
