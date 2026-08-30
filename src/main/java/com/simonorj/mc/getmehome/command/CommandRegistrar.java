@@ -54,10 +54,10 @@ public class CommandRegistrar {
                     Commands.literal("home")
                             .requires(src -> src.getSender().hasPermission("getmehome.command.home"))
                             .executes(ctx -> run(ctx, "home", new String[0]))
-                            .then(Commands.argument("target", StringArgumentType.string())
+                            .then(Commands.argument("target", StringArgumentType.greedyString())
                                     .suggests((ctx, builder) -> suggestFirstArg(ctx, builder, "getmehome.command.home.other"))
                                     .executes(ctx -> run(ctx, "home", new String[]{arg(ctx, "target")}))
-                                    .then(Commands.argument("home", StringArgumentType.string())
+                                    .then(Commands.argument("home", StringArgumentType.greedyString())
                                             .requires(src -> src.getSender().hasPermission("getmehome.command.home.other"))
                                             .suggests(this::suggestPlayerHome)
                                             .executes(ctx -> run(ctx, "home", new String[]{arg(ctx, "target"), arg(ctx, "home")}))
@@ -72,10 +72,10 @@ public class CommandRegistrar {
                     Commands.literal("sethome")
                             .requires(src -> src.getSender().hasPermission("getmehome.command.sethome"))
                             .executes(ctx -> run(ctx, "sethome", new String[0]))
-                            .then(Commands.argument("target", StringArgumentType.string())
+                            .then(Commands.argument("target", StringArgumentType.greedyString())
                                     .suggests((ctx, builder) -> suggestFirstArg(ctx, builder, "getmehome.command.sethome.other"))
                                     .executes(ctx -> run(ctx, "sethome", new String[]{arg(ctx, "target")}))
-                                    .then(Commands.argument("home", StringArgumentType.string())
+                                    .then(Commands.argument("home", StringArgumentType.greedyString())
                                             .requires(src -> src.getSender().hasPermission("getmehome.command.sethome.other"))
                                             .suggests(this::suggestPlayerHome)
                                             .executes(ctx -> run(ctx, "sethome", new String[]{arg(ctx, "target"), arg(ctx, "home")}))
@@ -89,7 +89,7 @@ public class CommandRegistrar {
                     Commands.literal("setdefaulthome")
                             .requires(src -> src.getSender().hasPermission("getmehome.command.setdefaulthome"))
                             .executes(ctx -> run(ctx, "setdefaulthome", new String[0]))
-                            .then(Commands.argument("home", StringArgumentType.string())
+                            .then(Commands.argument("home", StringArgumentType.greedyString())
                                     .suggests(this::suggestOwnHomes)
                                     .executes(ctx -> run(ctx, "setdefaulthome", new String[]{arg(ctx, "home")}))
                             )
@@ -101,10 +101,10 @@ public class CommandRegistrar {
                     Commands.literal("delhome")
                             .requires(src -> src.getSender().hasPermission("getmehome.command.delhome"))
                             .executes(ctx -> run(ctx, "delhome", new String[0]))
-                            .then(Commands.argument("target", StringArgumentType.string())
+                            .then(Commands.argument("target", StringArgumentType.greedyString())
                                     .suggests((ctx, builder) -> suggestFirstArg(ctx, builder, "getmehome.command.delhome.other"))
                                     .executes(ctx -> run(ctx, "delhome", new String[]{arg(ctx, "target")}))
-                                    .then(Commands.argument("home", StringArgumentType.string())
+                                    .then(Commands.argument("home", StringArgumentType.greedyString())
                                             .requires(src -> src.getSender().hasPermission("getmehome.command.delhome.other"))
                                             .suggests(this::suggestPlayerHome)
                                             .executes(ctx -> run(ctx, "delhome", new String[]{arg(ctx, "target"), arg(ctx, "home")}))
@@ -118,10 +118,10 @@ public class CommandRegistrar {
                     Commands.literal("listhomes")
                             .requires(src -> src.getSender().hasPermission("getmehome.command.listhomes"))
                             .executes(ctx -> run(ctx, "listhomes", new String[0]))
-                            .then(Commands.argument("arg1", StringArgumentType.string())
+                            .then(Commands.argument("arg1", StringArgumentType.greedyString())
                                     .suggests(this::suggestListHomesFirstArg)
                                     .executes(ctx -> run(ctx, "listhomes", new String[]{arg(ctx, "arg1")}))
-                                    .then(Commands.argument("arg2", StringArgumentType.string())
+                                    .then(Commands.argument("arg2", StringArgumentType.greedyString())
                                             .suggests(this::suggestListHomesSecondArg)
                                             .executes(ctx -> run(ctx, "listhomes", new String[]{arg(ctx, "arg1"), arg(ctx, "arg2")}))
                                     )
@@ -134,7 +134,7 @@ public class CommandRegistrar {
             commands.register(
                     Commands.literal("getmehome")
                             .executes(ctx -> run(ctx, "getmehome", new String[0]))
-                            .then(Commands.argument("action", StringArgumentType.string())
+                            .then(Commands.argument("action", StringArgumentType.greedyString())
                                     .suggests(this::suggestMetaAction)
                                     .executes(ctx -> run(ctx, "getmehome", new String[]{arg(ctx, "action")}))
                             )
@@ -164,20 +164,6 @@ public class CommandRegistrar {
 
     private static String arg(CommandContext<CommandSourceStack> ctx, String name) {
         return ctx.getArgument(name, String.class);
-    }
-
-    /**
-     * Suggests a home name, wrapping it in double quotes when it contains characters outside
-     * Brigadier's {@code word()} set ({@code [0-9A-Za-z._-]}). Quoting keeps the completion a
-     * single token so the client-side {@code string()} argument parses it back exactly, e.g.
-     * {@code "foo:bar"}. Plain names are suggested unchanged.
-     */
-    private static void suggestHomeName(SuggestionsBuilder builder, String name) {
-        if (name.matches(".*[^0-9A-Za-z._-].*")) {
-            builder.suggest("\"" + name + "\"");
-        } else {
-            builder.suggest(name);
-        }
     }
 
     /**
@@ -211,7 +197,7 @@ public class CommandRegistrar {
             String start = builder.getRemainingLowerCase();
             for (String n : plugin.getStorage().getAllHomes(((Player) sender).getUniqueId()).keySet()) {
                 if (n.toLowerCase().startsWith(start)) {
-                    suggestHomeName(builder, n);
+                    builder.suggest(n);
                 }
             }
         }
@@ -229,7 +215,7 @@ public class CommandRegistrar {
             String start = builder.getRemainingLowerCase();
             for (String n : plugin.getStorage().getAllHomes(uuid).keySet()) {
                 if (n.toLowerCase().startsWith(start)) {
-                    suggestHomeName(builder, n);
+                    builder.suggest(n);
                 }
             }
         }
