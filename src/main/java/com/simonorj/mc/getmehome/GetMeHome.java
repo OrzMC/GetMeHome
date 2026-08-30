@@ -1,6 +1,6 @@
 package com.simonorj.mc.getmehome;
 
-import com.google.common.base.Charsets;
+import java.nio.charset.StandardCharsets;
 import com.simonorj.mc.getmehome.command.CommandRegistrar;
 import com.simonorj.mc.getmehome.config.ConfigUpgrader;
 import com.simonorj.mc.getmehome.config.YamlPermValue;
@@ -152,7 +152,7 @@ public final class GetMeHome extends JavaPlugin {
 
             String data = ConfigTool.saveToString(getConfig());
 
-            try (Writer writer = new OutputStreamWriter(new FileOutputStream(configFile), Charsets.UTF_8)) {
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(configFile), StandardCharsets.UTF_8)) {
                 writer.write(data);
             }
         } catch (IOException e) {
