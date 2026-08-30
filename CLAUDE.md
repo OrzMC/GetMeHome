@@ -41,7 +41,7 @@ All Gradle commands run via the wrapper (Gradle 9.6.1). Building requires a JDK 
   - Hangar channels `beta` / `release` are case-sensitive and must be pre-created on the Hangar project page (the plugin does not create them).
   - The version-bump commit uses the default `GITHUB_TOKEN` because main has no branch protection — no PAT/BOT_PAT needed.
   - `HANGAR_API_TOKEN` secret needs Hangar `create_version` scope (plus page-edit scope for README sync).
-- Key `gradle.properties`: `plugin_jdk_min_version=25`, `plugin_bytecode_target=25`, `paper_api_version=26.1.2.build.74-stable`, `plugin_support_paper_versions=26.2`, `plugin_debug_server_version=26.2`.
+- Key `gradle.properties`: `plugin_jdk_min_version=25`, `plugin_bytecode_target=25`, `paper_api_version=26.2.build.119-stable`, `plugin_support_paper_versions=26.2`, `plugin_debug_server_version=26.2`.
 
 ## Release process
 

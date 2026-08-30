@@ -167,6 +167,20 @@ public class CommandRegistrar {
     }
 
     /**
+     * Suggests a home name, wrapping it in double quotes when it contains characters outside
+     * Brigadier's {@code word()} set ({@code [0-9A-Za-z._-]}). Quoting keeps the completion a
+     * single token so the client-side {@code string()} argument parses it back exactly, e.g.
+     * {@code "foo:bar"}. Plain names are suggested unchanged.
+     */
+    private static void suggestHomeName(SuggestionsBuilder builder, String name) {
+        if (name.matches(".*[^0-9A-Za-z._-].*")) {
+            builder.suggest("\"" + name + "\"");
+        } else {
+            builder.suggest(name);
+        }
+    }
+
+    /**
      * First argument of /home, /sethome, /delhome: the player's own home names, plus online
      * player names when the sender holds the {@code *.other} permission (mirrors the legacy
      * {@code onTabComplete} for {@code args.length == 1}).
@@ -197,7 +211,7 @@ public class CommandRegistrar {
             String start = builder.getRemainingLowerCase();
             for (String n : plugin.getStorage().getAllHomes(((Player) sender).getUniqueId()).keySet()) {
                 if (n.toLowerCase().startsWith(start)) {
-                    builder.suggest(n);
+                    suggestHomeName(builder, n);
                 }
             }
         }
@@ -215,7 +229,7 @@ public class CommandRegistrar {
             String start = builder.getRemainingLowerCase();
             for (String n : plugin.getStorage().getAllHomes(uuid).keySet()) {
                 if (n.toLowerCase().startsWith(start)) {
-                    builder.suggest(n);
+                    suggestHomeName(builder, n);
                 }
             }
         }

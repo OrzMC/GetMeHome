@@ -49,6 +49,12 @@ public class HomeCommands implements TabExecutor {
      * path and the Paper 26.x Brigadier registration path (see {@link CommandRegistrar}).
      */
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String command, @NotNull String label, final String[] args) {
+        // 控制台只能 delhome（删指定玩家的家），其余命令需玩家身份
+        if (!(sender instanceof Player) && !command.equalsIgnoreCase("delhome")) {
+            consoleCommand(sender, command);
+            return true;
+        }
+
         OfflinePlayer target;
         boolean otherHome;
 
@@ -80,17 +86,9 @@ public class HomeCommands implements TabExecutor {
         // Run command
         switch (command.toLowerCase()) {
             case "home":
-                if (!(sender instanceof Player)) {
-                    consoleCommand(sender, command);
-                    return true;
-                }
                 home((Player) sender, target, home);
                 break;
             case "sethome":
-                if (!(sender instanceof Player)) {
-                    consoleCommand(sender, command);
-                    return true;
-                }
                 setHome((Player) sender, target, home);
                 break;
             case "setdefaulthome":
