@@ -41,11 +41,19 @@ public class HomeCommands implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, final @NotNull Command cmd, @NotNull String label, final String[] args) {
+        return onCommand(sender, cmd.getName(), label, args);
+    }
+
+    /**
+     * Command logic keyed by command name. Shared by the legacy Bukkit {@link TabExecutor}
+     * path and the Paper 26.x Brigadier registration path (see {@link CommandRegistrar}).
+     */
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull String command, @NotNull String label, final String[] args) {
         OfflinePlayer target;
         boolean otherHome;
 
         // parse target player
-        if ((args.length >= 2) && hasOtherPermission(cmd, sender)) {
+        if ((args.length >= 2) && hasOtherPermission(command, sender)) {
             target = plugin.getPlayer(args[0]);
             if (target == null) {
                 sender.sendMessage(error(I18n.CMD_GENERIC_PLAYER_NOT_FOUND, sender));
@@ -56,7 +64,7 @@ public class HomeCommands implements TabExecutor {
             target = (Player) sender;
             otherHome = false;
         } else {
-            consoleCommand(sender, cmd.getName());
+            consoleCommand(sender, command);
             return true;
         }
 
@@ -70,7 +78,7 @@ public class HomeCommands implements TabExecutor {
             home = getStorage().getDefaultHomeName(target.getUniqueId());
 
         // Run command
-        switch (cmd.getName().toLowerCase()) {
+        switch (command.toLowerCase()) {
             case "home":
                 home((Player) sender, target, home);
                 break;
@@ -98,13 +106,13 @@ public class HomeCommands implements TabExecutor {
                 addHomeNames(ret, ((Player) sender).getUniqueId(), args[0]);
             }
 
-            if (hasOtherPermission(cmd, sender)) {
+            if (hasOtherPermission(cmd.getName(), sender)) {
                 addPlayerNames(ret, args[0]);
             }
             return ret;
         }
 
-        if (args.length == 2 && hasOtherPermission(cmd, sender)) {
+        if (args.length == 2 && hasOtherPermission(cmd.getName(), sender)) {
             UUID uuid = getStorage().getUniqueID(args[0]);
             if (uuid == null)
                 return Collections.emptyList();
@@ -333,9 +341,9 @@ public class HomeCommands implements TabExecutor {
             return error(I18n.CMD_GENERIC_HOME_OTHER_FAILURE, sender, target.getName(), home);
     }
 
-    private boolean hasOtherPermission(Command cmd, CommandSender sender) {
-        return (cmd.getName().equalsIgnoreCase("home") && sender.hasPermission(OTHER_HOME_PERM))
-                || (cmd.getName().equalsIgnoreCase("sethome") && sender.hasPermission(OTHER_SETHOME_PERM))
-                || (cmd.getName().equalsIgnoreCase("delhome") && sender.hasPermission(OTHER_DELHOME_PERM));
+    private boolean hasOtherPermission(String command, CommandSender sender) {
+        return (command.equalsIgnoreCase("home") && sender.hasPermission(OTHER_HOME_PERM))
+                || (command.equalsIgnoreCase("sethome") && sender.hasPermission(OTHER_SETHOME_PERM))
+                || (command.equalsIgnoreCase("delhome") && sender.hasPermission(OTHER_DELHOME_PERM));
     }
 }

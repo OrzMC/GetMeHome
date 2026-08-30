@@ -69,6 +69,15 @@ public class ListHomesCommand implements TabExecutor {
         return true;
     }
 
+    /**
+     * Entry point for the Paper 26.x Brigadier path (see {@link CommandRegistrar}).
+     * The legacy {@link Command} argument is unused by the list logic; it only exists
+     * to satisfy the {@link TabExecutor} contract.
+     */
+    public boolean execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
+        return onCommand(sender, null, label, args);
+    }
+
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if (args.length == 1) {

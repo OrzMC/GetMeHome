@@ -1,39 +1,15 @@
 name: GetMeHome
-version: 3.0.1
+version: 3.0.2
 author: Simon Chuu
 contributors: [wangzhizhou]
 description: Simple home plugin that just gets you home
 main: com.simonorj.mc.getmehome.GetMeHome
 website: http://github.com/SimonOrJ/GetMeHome
-api-version: '26.1.2'
+api-version: '26.2'
 
-commands:
-  getmehome:
-    description: GetMeHome's main (help) command
-    usage: /getmehome
-  delhome:
-    description: Deletes a set home
-    usage: /delhome [home name]
-    permission: getmehome.command.delhome
-  home:
-    aliases: [ h ]
-    description: Sends you home
-    usage: /home [home name]
-    permission: getmehome.command.home
-  listhomes:
-    aliases: [ homes ]
-    description: Lists all the homes
-    usage: /listhomes
-    permission: getmehome.command.listhomes
-  sethome:
-    description: Sets home at your current position
-    usage: /sethome [home name]
-    permission: getmehome.command.sethome
-  setdefaulthome:
-    description: Sets a different home name as the default home.
-    usage: /setdefaulthome <home name>
-    permission: getmehome.command.setdefaulthome
-
+# Paper 26.x 插件模式：命令经 LifecycleEvents.COMMANDS + Brigadier 注册
+# （见 CommandRegistrar），不再声明 YAML commands —— Bukkit CommandMap 声明
+# 会生成无 executor 的幽灵命令（执行返回 false → 显示 usage）且与 Brigadier 树冲突。
 permissions:
   # bStats
   bstats:

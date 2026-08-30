@@ -1,9 +1,7 @@
 package com.simonorj.mc.getmehome;
 
 import com.google.common.base.Charsets;
-import com.simonorj.mc.getmehome.command.HomeCommands;
-import com.simonorj.mc.getmehome.command.ListHomesCommand;
-import com.simonorj.mc.getmehome.command.MetaCommand;
+import com.simonorj.mc.getmehome.command.CommandRegistrar;
 import com.simonorj.mc.getmehome.config.ConfigUpgrader;
 import com.simonorj.mc.getmehome.config.YamlPermValue;
 import com.simonorj.mc.getmehome.storage.HomeStorageAPI;
@@ -69,13 +67,9 @@ public final class GetMeHome extends JavaPlugin {
     public void onEnable() {
         GetMeHome.instance = this;
 
-        getCommand("getmehome").setExecutor(new MetaCommand());
-        HomeCommands hc = new HomeCommands(this);
-        getCommand("home").setExecutor(hc);
-        getCommand("sethome").setExecutor(hc);
-        getCommand("setdefaulthome").setExecutor(hc);
-        getCommand("delhome").setExecutor(hc);
-        getCommand("listhomes").setExecutor(new ListHomesCommand(this));
+        // Paper 26.x: commands are registered via LifecycleEvents.COMMANDS + Brigadier
+        // (see CommandRegistrar); plugin.yml declarations are no longer authoritative.
+        new CommandRegistrar(this).register();
 
         // Get config
         saveDefaultConfig();
